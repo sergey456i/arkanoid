@@ -59,7 +59,6 @@ class Block extends Drawable {
         this.h = 30;
         this.x = x;
         this.y = y;
-        this.color = color;
         this.createElement();
         this.element.classList.add(color);
     }
@@ -88,7 +87,7 @@ class Ball extends Drawable {
 
     update() {
         // Отскок от стен
-        if(this.x <= 0 || this.x >= window.innerWidth - this.w) {
+        if(this.x <= 312 || this.x >= window.innerWidth - this.w) {
             this.offsets.x *= -1;
         }
 
@@ -127,7 +126,7 @@ class Player extends Drawable {
         super(game);
         this.w = 150;
         this.h = 20;
-        this.x = window.innerWidth / 2 - this.w / 2;
+        this.x = window.innerWidth / 1.57 - this.w ;
         this.y = window.innerHeight - 50;
         this.speedPerFrame = 15;
         this.skillTimer = 0;
@@ -177,8 +176,8 @@ class Player extends Drawable {
 
     applySkill() {
         // Ускорение мяча при использовании навыка
-        this.game.ball.offsets.x *= 1.05;
-        this.game.ball.offsets.y *= 1.05;
+        this.game.ball.offsets.x *= 1.01;
+        this.game.ball.offsets.y *= 1.01;
     }
 }
 
@@ -215,17 +214,17 @@ class Game {
     }
 
     createBlocks() {
-        const rows = 5;
+        const rows = 8;
         const cols = 8;
         const blockWidth = 80;
         const blockHeight = 30;
         const margin = 10;
-        const startX = (window.innerWidth - (cols * (blockWidth + margin))) / 2;
+        const startX = (window.innerWidth - (cols * (blockWidth + margin))) /1.5;
 
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
                 const x = startX + col * (blockWidth + margin);
-                const y = 50 + row * (blockHeight + margin);
+                const y = 10 + row * (blockHeight + margin);
                 const color = this.blockColors[row % this.blockColors.length];
                 this.generateBlock(x, y, color);
             }
