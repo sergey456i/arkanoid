@@ -128,9 +128,10 @@ class Player extends Drawable {
         this.h = 20;
         this.x = window.innerWidth / 1.57 - this.w ;
         this.y = window.innerHeight - 50;
-        this.speedPerFrame = 15;
+        this.speedPerFrame = 10;
         this.skillTimer = 0;
         this.couldTimer = 0;
+        this.leftBoundary = 312;
         this.keys ={
             ArrowLeft: false,
             ArrowRight: false,
@@ -149,9 +150,17 @@ class Player extends Drawable {
         if(code in this.keys) this.keys[code] = value;
     }
     update() {
-        if(this.keys.ArrowLeft && this.x > 0) this.offsets.x = -this.speedPerFrame;
-        else if(this.keys.ArrowRight && this.x < window.innerWidth - this.w) this.offsets.x = this.speedPerFrame;
-        else this.offsets.x = 0;
+        if (this.keys.ArrowLeft) {
+            this.offsets.x = -this.speedPerFrame;
+        } else if (this.keys.ArrowRight) {
+            this.offsets.x = this.speedPerFrame;
+        } else {
+            this.offsets.x = 0;
+        }
+
+        super.update();
+        const maxRight = window.innerWidth - this.w;
+        this.x = Math.max(this.leftBoundary, Math.min(this.x, maxRight));
 
         if(this.keys.Space && this.couldTimer === 0){
             this.skillTimer++;
@@ -250,7 +259,7 @@ class Game {
                 if (this.counterForTimer % 60 === 0) {
                     this.timer();
                 }
-                if (this.hp < 0 || this.points >= 40) {
+                if (this.hp < 0 || this.points >= 64) {
                     this.end();
                 }
                 $('.pause').style.display = 'none';
@@ -308,7 +317,7 @@ class Game {
     end() {
         this.ended = true;
         let time = this.time;
-        if(this.points >= 40) {
+        if(this.points >= 64) {
             $('#playerName').innerHTML = `Поздравляем, ${this.name}!`;
             $('#endTime').innerHTML = `Ваше время, ${time.m1}${time.m2}:${time.s1}${time.s2}`;
             $('#collectedFruits').innerHTML = `Вы разбили ${this.points} блоков`;

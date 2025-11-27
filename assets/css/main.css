@@ -57,10 +57,12 @@ main {
 }
 .d-flex > span{
     display: flex;
+    gap: 5px;
     align-items: center;
     justify-content: center;
     padding: 0 1em;
-    color: white;
+    color: #00ff31;
+    backdrop-filter: blur(5px) blur(5px) blur(5px);
 }
 
 .elements {
