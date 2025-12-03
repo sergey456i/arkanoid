@@ -104,13 +104,19 @@ class Ball extends Drawable {
             this.offsets.y *= -1;
         }
 
-        // Проверка проигрыша (мяч упал)
+        // Проверка падения мяча
         if(this.y > window.innerHeight) {
-            this.game.hp--;
-            this.reset();
+            if (!this.game.isTestMode) {
+                // В обычном режиме - уменьшаем жизни и сбрасываем мяч
+                this.game.hp--;
+                this.reset();
+            } else {
+                this.y = window.innerHeight - this.h;
+                this.offsets.y *= -1;
+            }
+        } else {
+            super.update();
         }
-
-        super.update();
     }
 
     reset() {
@@ -191,14 +197,18 @@ class Player extends Drawable {
 }
 
 class Game {
-    constructor() {
+    constructor(name) { // Принимаем имя в конструкторе
         this.name = name;
+        this.isTestMode = (name === 'tester'); // Определяем режим теста
         this.elements = [];
         this.player = this.generate(Player);
         this.ball = this.generate(Ball);
         this.counterForTimer = 0;
         this.blockColors = ['red', 'blue', 'green', 'yellow'];
-        this.hp = 3;
+
+        // Начальное количество жизней зависит от режима
+        this.hp = this.isTestMode ? 999 : 3; // Много жизней в тесте
+
         this.points = 0;
         this.time = {
             m1: 0,
@@ -228,7 +238,7 @@ class Game {
         const blockWidth = 80;
         const blockHeight = 30;
         const margin = 10;
-        const startX = (window.innerWidth - (cols * (blockWidth + margin))) /1.5;
+        const startX = (window.innerWidth - (cols * (blockWidth + margin))) / 1.5; // Исправлено деление
 
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
@@ -255,13 +265,21 @@ class Game {
     loop() {
         requestAnimationFrame(() => {
             if(!this.pause) {
-                this.counterForTimer++;
-                if (this.counterForTimer % 60 === 0) {
-                    this.timer();
+                // В тестовом режиме таймер не увеличивается
+                if (!this.isTestMode) {
+                    this.counterForTimer++;
+                    if (this.counterForTimer % 60 === 0) {
+                        this.timer();
+                    }
                 }
-                if (this.hp < 0 || this.points >= 64) {
+
+                // В тестовом режиме игра не заканчивается по условиям hp/points
+                if (!this.isTestMode && (this.hp < 0 || this.points >= 64)) {
+                    this.end();
+                } else if (this.points >= 64) { // Но если набраны все блоки, можно завершить
                     this.end();
                 }
+
                 $('.pause').style.display = 'none';
                 this.updateElements();
                 this.setParams();
