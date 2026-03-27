@@ -89,6 +89,8 @@ class Ball extends Drawable {
 
         if(this.x <= 312 || this.x >= window.innerWidth - this.w) {
             this.offsets.x *= -1;
+            if(this.x <= 312) this.x = 312;
+            if(this.x >= window.innerWidth - this.w) this.x = window.innerWidth - this.w;
         }
 
         if(this.y <= 0) {
@@ -99,6 +101,7 @@ class Ball extends Drawable {
             let hitPos = (this.x + this.w/2) - (this.game.player.x + this.game.player.w/2);
             this.offsets.x = hitPos * 0.1;
             this.offsets.y *= -1;
+            this.y = this.game.player.y - this.h;
         }
 
         if(this.y > window.innerHeight) {
@@ -180,8 +183,6 @@ class Player extends Drawable {
             this.skillTimer = 0;
             $('#skill').innerHTML = 'Готово';
         }
-
-        super.update();
     }
 
     applySkill() {
