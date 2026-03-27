@@ -96,7 +96,6 @@ class Ball extends Drawable {
         }
 
         if(this.isCollision(this.game.player)) {
-            // Меняем направление в зависимости от места удара о платформу
             let hitPos = (this.x + this.w/2) - (this.game.player.x + this.game.player.w/2);
             this.offsets.x = hitPos * 0.1;
             this.offsets.y *= -1;
