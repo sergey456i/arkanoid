@@ -185,7 +185,6 @@ class Player extends Drawable {
     }
 
     applySkill() {
-        // Ускорение мяча при использовании навыка
         this.game.ball.offsets.x *= 1.01;
         this.game.ball.offsets.y *= 1.01;
     }
