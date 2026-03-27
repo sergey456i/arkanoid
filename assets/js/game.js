@@ -86,17 +86,15 @@ class Ball extends Drawable {
     }
 
     update() {
-        // Отскок от стен
+
         if(this.x <= 312 || this.x >= window.innerWidth - this.w) {
             this.offsets.x *= -1;
         }
 
-        // Отскок от потолка
         if(this.y <= 0) {
             this.offsets.y *= -1;
         }
 
-        // Проверка столкновения с платформой
         if(this.isCollision(this.game.player)) {
             // Меняем направление в зависимости от места удара о платформу
             let hitPos = (this.x + this.w/2) - (this.game.player.x + this.game.player.w/2);
@@ -104,10 +102,8 @@ class Ball extends Drawable {
             this.offsets.y *= -1;
         }
 
-        // Проверка падения мяча
         if(this.y > window.innerHeight) {
             if (!this.game.isTestMode) {
-                // В обычном режиме - уменьшаем жизни и сбрасываем мяч
                 this.game.hp--;
                 this.reset();
             } else {
@@ -197,7 +193,7 @@ class Player extends Drawable {
 }
 
 class Game {
-    constructor(name) { // Принимаем имя в конструкторе
+    constructor(name) {
         this.name = name;
         this.isTestMode = (name === 'tester'); // Определяем режим теста
         this.elements = [];
@@ -205,9 +201,7 @@ class Game {
         this.ball = this.generate(Ball);
         this.counterForTimer = 0;
         this.blockColors = ['red', 'blue', 'green', 'yellow'];
-
-        // Начальное количество жизней зависит от режима
-        this.hp = this.isTestMode ? 999 : 3; // Много жизней в тесте
+        this.hp = this.isTestMode ? 999 : 3;
 
         this.points = 0;
         this.time = {
@@ -234,11 +228,11 @@ class Game {
 
     createBlocks() {
         const rows = 8;
-        const cols = 8;
+        const cols = 16;
         const blockWidth = 80;
         const blockHeight = 30;
         const margin = 10;
-        const startX = (window.innerWidth - (cols * (blockWidth + margin))) / 1.5; // Исправлено деление
+        const startX = (window.innerWidth - (cols * (blockWidth + margin))) / 1.2;
 
         for (let row = 0; row < rows; row++) {
             for (let col = 0; col < cols; col++) {
@@ -265,18 +259,16 @@ class Game {
     loop() {
         requestAnimationFrame(() => {
             if(!this.pause) {
-                // В тестовом режиме таймер не увеличивается
                 if (!this.isTestMode) {
                     this.counterForTimer++;
-                    if (this.counterForTimer % 60 === 0) {
+                    if (this.counterForTimer % 128 === 0) {
                         this.timer();
                     }
                 }
 
-                // В тестовом режиме игра не заканчивается по условиям hp/points
-                if (!this.isTestMode && (this.hp < 0 || this.points >= 64)) {
+                if (!this.isTestMode && (this.hp < 0 || this.points >= 128)) {
                     this.end();
-                } else if (this.points >= 64) { // Но если набраны все блоки, можно завершить
+                } else if (this.points >= 128) {
                     this.end();
                 }
 
@@ -335,7 +327,7 @@ class Game {
     end() {
         this.ended = true;
         let time = this.time;
-        if(this.points >= 64) {
+        if(this.points >= 128) {
             $('#playerName').innerHTML = `Поздравляем, ${this.name}!`;
             $('#endTime').innerHTML = `Ваше время, ${time.m1}${time.m2}:${time.s1}${time.s2}`;
             $('#collectedFruits').innerHTML = `Вы разбили ${this.points} блоков`;
